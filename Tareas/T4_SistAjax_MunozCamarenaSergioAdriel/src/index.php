@@ -67,6 +67,10 @@
             border: 1px solid #dee2e6;
             border-radius: 8px;
             background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
         .card {
             background: white;
@@ -189,11 +193,17 @@ function renderizarRegistros(datos) {
     contador.textContent = `${Math.min(datos.length, 30)} imágenes cargadas`;
 
     textos.innerHTML = datos.map(registro => `
-        <div class="valor">${escaparHTML(registro.texto)}</div>
+        <div class="valor">
+            <span>${escaparHTML(registro.texto)}</span>
+            <button class="edit" type="button" onclick="prepararEdicion(${registro.id}, '${escaparJS(registro.texto)}', ${registro.numero})">Editar</button>
+        </div>
     `).join('');
 
     numeros.innerHTML = datos.map(registro => `
-        <div class="valor"><strong>${registro.numero}</strong></div>
+        <div class="valor">
+            <strong>${registro.numero}</strong>
+            <button class="edit" type="button" onclick="prepararEdicion(${registro.id}, '${escaparJS(registro.texto)}', ${registro.numero})">Editar</button>
+        </div>
     `).join('');
 
     if (!datos.length) {
@@ -262,15 +272,10 @@ formulario.addEventListener('submit', async (event) => {
             throw new Error(resultado.mensaje || 'Ocurrió un error.');
         }
 
-        if (editandoId) {
-            actualizarTarjeta(resultado.registro);
-        } else {
-            agregarTarjeta(resultado.registro);
-        }
+        await cargarRegistros();
 
         mostrarEstado(resultado.mensaje, 'success');
         cancelarEdicion();
-        actualizarContador(1, !editandoId);
     } catch (error) {
         mostrarEstado(error.message, 'error');
     } finally {
@@ -341,16 +346,10 @@ async function eliminarRegistro(id) {
         if (tarjeta) tarjeta.remove();
 
         mostrarEstado(resultado.mensaje, 'success');
-        actualizarContador(-1, false);
-        cargarRegistros();
+        await cargarRegistros();
     } catch (error) {
         mostrarEstado(error.message, 'error');
     }
-}
-
-function actualizarContador(cambio, incrementar) {
-    const actual = Number(contador.textContent.match(/\d+/)?.[0] || 0);
-    contador.textContent = `${Math.max(0, actual + (incrementar ? cambio : cambio))} registros cargados`;
 }
 
 cargarRegistros();
