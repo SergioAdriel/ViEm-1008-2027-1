@@ -47,6 +47,8 @@
             min-width: 0;
         }
         .valor-inline button { width: 100%; min-height: 44px; }
+        .valor-inline .actions { width: 100%; }
+        .valor-inline .actions button { width: auto; }
         label { display: block; font-weight: bold; margin-bottom: 6px; }
         input[type="text"], input[type="number"], input[type="file"], textarea {
             width: 100%;
@@ -215,14 +217,14 @@ function renderizarRegistros(datos) {
     textos.innerHTML = datos.map(registro => `
         <div class="valor" id="texto-${registro.id}">
             <span>${escaparHTML(registro.texto)}</span>
-            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'texto')">Editar</button>
+            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'texto')">Editar texto</button>
         </div>
     `).join('');
 
     numeros.innerHTML = datos.map(registro => `
         <div class="valor" id="numero-${registro.id}">
             <strong>${registro.numero}</strong>
-            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'numero')">Editar</button>
+            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'numero')">Editar número</button>
         </div>
     `).join('');
 
@@ -246,13 +248,17 @@ function editarValor(id, tipo) {
         : `<input name="texto" type="hidden" value="${escaparHTML(texto)}">`;
 
     valor.innerHTML = `
-        <form class="valor-inline" data-id="${id}">
+        <form class="formulario-inline valor-inline" data-id="${id}">
             ${campo}
             ${oculto}
-            <button class="primary" type="submit">Guardar</button>
-            <button class="secondary" type="button" onclick="cargarRegistros()">Cancelar</button>
+            <div class="actions">
+                <button class="primary" type="submit">Guardar</button>
+                <button class="secondary" type="button" onclick="cargarRegistros()">Cancelar</button>
+            </div>
         </form>
     `;
+
+    valor.querySelector('textarea, input:not([type="hidden"])').focus();
 }
 
 document.querySelectorAll('.lista-valores').forEach((lista) => {
