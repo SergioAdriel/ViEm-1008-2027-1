@@ -22,7 +22,7 @@ DELIMITER //
 CREATE PROCEDURE llenar_registros()
 BEGIN
     DECLARE i INT DEFAULT 6;
-    WHILE i <= 250 DO
+    WHILE i <= 300 DO
         INSERT INTO registros (texto, numero, imagen)
         VALUES (
             CONCAT('Equipo de prueba ', i),

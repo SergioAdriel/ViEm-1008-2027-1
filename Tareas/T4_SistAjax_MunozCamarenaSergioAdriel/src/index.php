@@ -57,6 +57,17 @@
             grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
             gap: 16px;
         }
+        .lista-valores {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .valor {
+            padding: 14px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
         .card {
             background: white;
             border-radius: 10px;
@@ -93,7 +104,7 @@
 <body>
 <header>
     <h1>CRUD de equipos con AJAX</h1>
-    <p>Texto + número + imagen</p>
+    <p>Registros separados en tres bloques</p>
 </header>
 
 <main>
@@ -126,7 +137,19 @@
     </section>
 
     <section class="panel">
-        <h2>Registros</h2>
+        <h2>Textos</h2>
+        <p class="contador">Hasta 300 caracteres por registro</p>
+        <div id="textos" class="lista-valores"></div>
+    </section>
+
+    <section class="panel">
+        <h2>Números</h2>
+        <p class="contador">300 valores iniciales</p>
+        <div id="numeros" class="lista-valores"></div>
+    </section>
+
+    <section class="panel">
+        <h2>Imágenes</h2>
         <p class="contador" id="contador">Cargando...</p>
         <div id="registros" class="grid"></div>
     </section>
@@ -136,6 +159,8 @@
 let editandoId = null;
 
 const formulario = document.getElementById('formulario');
+const textos = document.getElementById('textos');
+const numeros = document.getElementById('numeros');
 const registros = document.getElementById('registros');
 const estado = document.getElementById('estado');
 const contador = document.getElementById('contador');
@@ -161,14 +186,22 @@ async function cargarRegistros() {
 }
 
 function renderizarRegistros(datos) {
-    contador.textContent = `${datos.length} registros cargados`;
+    contador.textContent = `${Math.min(datos.length, 30)} imágenes cargadas`;
+
+    textos.innerHTML = datos.map(registro => `
+        <div class="valor">${escaparHTML(registro.texto)}</div>
+    `).join('');
+
+    numeros.innerHTML = datos.map(registro => `
+        <div class="valor"><strong>${registro.numero}</strong></div>
+    `).join('');
 
     if (!datos.length) {
         registros.innerHTML = '<div class="empty">No hay registros.</div>';
         return;
     }
 
-    registros.innerHTML = datos.map(registro => tarjetaHTML(registro)).join('');
+    registros.innerHTML = datos.slice(0, 30).map(registro => tarjetaHTML(registro)).join('');
 }
 
 function tarjetaHTML(registro) {
@@ -250,6 +283,8 @@ function agregarTarjeta(registro) {
     if (vacio) vacio.remove();
 
     registros.insertAdjacentHTML('afterbegin', tarjetaHTML(registro));
+    textos.insertAdjacentHTML('afterbegin', `<div class="valor">${escaparHTML(registro.texto)}</div>`);
+    numeros.insertAdjacentHTML('afterbegin', `<div class="valor"><strong>${registro.numero}</strong></div>`);
 }
 
 function actualizarTarjeta(registro) {
@@ -257,6 +292,8 @@ function actualizarTarjeta(registro) {
     if (anterior) {
         anterior.outerHTML = tarjetaHTML(registro);
     }
+
+    cargarRegistros();
 }
 
 function prepararEdicion(id, texto, numero) {
@@ -305,10 +342,7 @@ async function eliminarRegistro(id) {
 
         mostrarEstado(resultado.mensaje, 'success');
         actualizarContador(-1, false);
-
-        if (!registros.children.length) {
-            registros.innerHTML = '<div class="empty">No hay registros.</div>';
-        }
+        cargarRegistros();
     } catch (error) {
         mostrarEstado(error.message, 'error');
     }

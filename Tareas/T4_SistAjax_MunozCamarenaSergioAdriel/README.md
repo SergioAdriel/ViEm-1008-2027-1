@@ -29,7 +29,7 @@ eliminar.php eliminar un registro
 
 Cada endpoint devuelve JSON. Tras una operación, JavaScript actualiza solo la tarjeta afectada en lugar de volver a cargar toda la página.
 
-La base de datos se inicializa con 250 registros de prueba. Los primeros 30 ya tienen una imagen local en `src/uploads/`; el resto usa una imagen por defecto.
+La base de datos se inicializa con 300 registros de prueba. La página los muestra en tres bloques: textos, números e imágenes. Los primeros 30 ya tienen una imagen local en `src/uploads/`; el resto usa una imagen por defecto.
 
 ## Detener el proyecto
 
