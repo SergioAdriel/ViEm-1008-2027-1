@@ -217,14 +217,20 @@ function renderizarRegistros(datos) {
     textos.innerHTML = datos.map(registro => `
         <div class="valor" id="texto-${registro.id}">
             <span>${escaparHTML(registro.texto)}</span>
-            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'texto')">Editar texto</button>
+            <div class="actions">
+                <button class="edit" type="button" onclick="editarValor(${registro.id}, 'texto')">Editar texto</button>
+                <button class="danger" type="button" onclick="eliminarRegistro(${registro.id})">Eliminar</button>
+            </div>
         </div>
     `).join('');
 
     numeros.innerHTML = datos.map(registro => `
         <div class="valor" id="numero-${registro.id}">
             <strong>${registro.numero}</strong>
-            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'numero')">Editar número</button>
+            <div class="actions">
+                <button class="edit" type="button" onclick="editarValor(${registro.id}, 'numero')">Editar número</button>
+                <button class="danger" type="button" onclick="eliminarRegistro(${registro.id})">Eliminar</button>
+            </div>
         </div>
     `).join('');
 
