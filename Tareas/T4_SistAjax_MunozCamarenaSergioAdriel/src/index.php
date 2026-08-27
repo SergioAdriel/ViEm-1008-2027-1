@@ -33,6 +33,10 @@
             gap: 12px;
             align-items: end;
         }
+        .formulario-inline {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
         label { display: block; font-weight: bold; margin-bottom: 6px; }
         input[type="text"], input[type="number"], input[type="file"] {
             width: 100%;
@@ -224,13 +228,68 @@ function tarjetaHTML(registro) {
                 <h3>${textoSeguro}</h3>
                 <div class="number">Número: <strong>${registro.numero}</strong></div>
                 <div class="actions">
-                    <button class="edit" onclick="prepararEdicion(${registro.id}, '${escaparJS(registro.texto)}', ${registro.numero})">Editar</button>
-                    <button class="danger" onclick="eliminarRegistro(${registro.id})">Eliminar</button>
+                    <button class="edit" type="button" onclick="editarEnLinea(${registro.id})">Editar</button>
+                    <button class="danger" type="button" onclick="eliminarRegistro(${registro.id})">Eliminar</button>
                 </div>
             </div>
         </article>
     `;
 }
+
+function editarEnLinea(id) {
+    const tarjeta = document.getElementById(`registro-${id}`);
+    const titulo = tarjeta.querySelector('h3').textContent;
+    const numero = tarjeta.querySelector('.number strong').textContent;
+
+    tarjeta.querySelector('.content').innerHTML = `
+        <form class="formulario-inline" data-id="${id}">
+            <label>
+                Texto
+                <input name="texto" type="text" maxlength="300" value="${escaparHTML(titulo)}" required>
+            </label>
+            <label>
+                Número
+                <input name="numero" type="number" min="0" max="300" value="${numero}" required>
+            </label>
+            <label>
+                Reemplazar imagen
+                <input name="imagen" type="file" accept="image/jpeg,image/png,image/gif,image/webp">
+            </label>
+            <div class="actions">
+                <button class="primary" type="submit">Guardar</button>
+                <button class="secondary" type="button" onclick="cargarRegistros()">Cancelar</button>
+            </div>
+        </form>
+    `;
+}
+
+registros.addEventListener('submit', async (event) => {
+    if (!event.target.matches('.formulario-inline')) return;
+
+    event.preventDefault();
+    const formularioInline = event.target;
+    const datos = new FormData(formularioInline);
+    datos.append('id', formularioInline.dataset.id);
+    formularioInline.classList.add('loading');
+
+    try {
+        const respuesta = await fetch('api/editar.php', {
+            method: 'POST',
+            body: datos
+        });
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok || !resultado.ok) {
+            throw new Error(resultado.mensaje || 'No se pudo actualizar.');
+        }
+
+        await cargarRegistros();
+        mostrarEstado(resultado.mensaje, 'success');
+    } catch (error) {
+        mostrarEstado(error.message, 'error');
+        formularioInline.classList.remove('loading');
+    }
+});
 
 function escaparHTML(texto) {
     return String(texto)
