@@ -3,7 +3,7 @@ USE ajax_crud;
 
 CREATE TABLE IF NOT EXISTS registros (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    texto VARCHAR(150) NOT NULL,
+    texto VARCHAR(300) NOT NULL,
     numero INT NOT NULL,
     imagen VARCHAR(255) NOT NULL DEFAULT 'default.svg',
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -11,11 +11,11 @@ CREATE TABLE IF NOT EXISTS registros (
 );
 
 INSERT INTO registros (texto, numero, imagen) VALUES
-('Laptop Lenovo', 25, 'default.svg'),
-('Adaptador HDMI', 12, 'default.svg'),
-('Mouse inalámbrico', 37, 'default.svg'),
-('Teclado mecánico', 18, 'default.svg'),
-('Monitor 24 pulgadas', 8, 'default.svg');
+('Laptop Lenovo', 25, 'producto-01.svg'),
+('Adaptador HDMI', 12, 'producto-02.svg'),
+('Mouse inalámbrico', 37, 'producto-03.svg'),
+('Teclado mecánico', 18, 'producto-04.svg'),
+('Monitor 24 pulgadas', 8, 'producto-05.svg');
 
 DELIMITER //
 
@@ -27,7 +27,10 @@ BEGIN
         VALUES (
             CONCAT('Equipo de prueba ', i),
             FLOOR(1 + RAND() * 100),
-            'default.svg'
+            CASE
+                WHEN i <= 30 THEN CONCAT('producto-', LPAD(i, 2, '0'), '.svg')
+                ELSE 'default.svg'
+            END
         );
         SET i = i + 1;
     END WHILE;

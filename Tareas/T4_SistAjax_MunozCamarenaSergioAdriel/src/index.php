@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD AJAX - Equipos</title>
+    <title>CRUD AJAX - Registros</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -93,7 +93,7 @@
 <body>
 <header>
     <h1>CRUD de equipos con AJAX</h1>
-    <p>Texto + número + imagen | 250 registros de prueba</p>
+    <p>Texto + número + imagen</p>
 </header>
 
 <main>
@@ -103,12 +103,12 @@
         <form id="formulario" enctype="multipart/form-data">
             <div>
                 <label for="texto">Texto</label>
-                <input id="texto" name="texto" type="text" maxlength="150" required placeholder="Ej. Laptop Lenovo">
+                <input id="texto" name="texto" type="text" maxlength="300" required placeholder="Escribe hasta 300 caracteres">
             </div>
 
             <div>
                 <label for="numero">Número</label>
-                <input id="numero" name="numero" type="number" required placeholder="Ej. 25">
+                <input id="numero" name="numero" type="number" min="0" max="300" required placeholder="Ej. 25">
             </div>
 
             <div>

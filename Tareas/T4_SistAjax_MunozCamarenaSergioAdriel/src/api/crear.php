@@ -5,9 +5,9 @@ require_once '../db.php';
 $texto = trim($_POST['texto'] ?? '');
 $numero = filter_var($_POST['numero'] ?? null, FILTER_VALIDATE_INT);
 
-if ($texto === '' || $numero === false || $numero === null) {
+if ($texto === '' || mb_strlen($texto) > 300 || $numero === false || $numero === null || $numero < 0 || $numero > 300) {
     http_response_code(422);
-    echo json_encode(['ok' => false, 'mensaje' => 'Texto y número son obligatorios.']);
+    echo json_encode(['ok' => false, 'mensaje' => 'El texto debe tener hasta 300 caracteres y el número debe estar entre 0 y 300.']);
     exit;
 }
 
@@ -23,7 +23,12 @@ if (!empty($_FILES['imagen']['name'])) {
 
     $ext = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
     $imagen = bin2hex(random_bytes(12)) . '.' . $ext;
-    move_uploaded_file($_FILES['imagen']['tmp_name'], __DIR__ . '/../uploads/' . $imagen);
+    $rutaImagen = __DIR__ . '/../uploads/' . $imagen;
+    if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaImagen)) {
+        http_response_code(500);
+        echo json_encode(['ok' => false, 'mensaje' => 'No se pudo guardar la imagen.']);
+        exit;
+    }
 }
 
 $stmt = $pdo->prepare("INSERT INTO registros (texto, numero, imagen) VALUES (?, ?, ?)");

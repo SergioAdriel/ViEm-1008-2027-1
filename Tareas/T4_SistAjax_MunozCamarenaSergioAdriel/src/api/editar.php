@@ -6,9 +6,9 @@ $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
 $texto = trim($_POST['texto'] ?? '');
 $numero = filter_var($_POST['numero'] ?? null, FILTER_VALIDATE_INT);
 
-if (!$id || $texto === '' || $numero === false || $numero === null) {
+if (!$id || $texto === '' || mb_strlen($texto) > 300 || $numero === false || $numero === null || $numero < 0 || $numero > 300) {
     http_response_code(422);
-    echo json_encode(['ok' => false, 'mensaje' => 'Datos inválidos.']);
+    echo json_encode(['ok' => false, 'mensaje' => 'El texto debe tener hasta 300 caracteres y el número debe estar entre 0 y 300.']);
     exit;
 }
 

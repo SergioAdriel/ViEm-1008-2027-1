@@ -1,115 +1,45 @@
-# CRUD AJAX con Docker
+# CRUD con AJAX
 
-Práctica de CRUD sencillo usando:
+Práctica de un CRUD de productos con PHP, MySQL y Docker Compose. La interfaz usa `fetch()` para crear, editar y eliminar registros sin recargar la página. También permite subir y actualizar imágenes.
 
-- HTML/CSS/JavaScript
-- AJAX mediante `fetch()`
-- PHP 8.3
-- MySQL 8.4
-- Docker Compose
-- Subida y actualización de imágenes
-- 250 registros iniciales
+## Puesta en marcha
 
-## 1. Requisitos
-
-Tener instalado:
-
-- Docker Desktop
-- Docker Compose (incluido en Docker Desktop)
-
-## 2. Levantar el proyecto
-
-Desde esta carpeta:
+Hace falta tener Docker Desktop instalado. Desde la carpeta del proyecto, ejecuta:
 
 ```bash
 docker compose up -d --build
 ```
 
-Abrir:
+Después, abre:
 
 ```text
 http://localhost:8080
 ```
 
-## 3. Qué demuestra
+## Endpoints
 
-### Create
-El formulario manda los datos con `fetch()` a:
-
-```text
-api/crear.php
-```
-
-La respuesta es JSON y JavaScript agrega únicamente la nueva tarjeta.
-
-### Read
-Al cargar la página:
+Los archivos de `src/api/` se encargan de las operaciones:
 
 ```text
-api/listar.php
+crear.php    crear un registro
+listar.php   listar los registros
+editar.php   actualizar un registro
+eliminar.php eliminar un registro
 ```
 
-consulta MySQL y devuelve todos los registros.
+Cada endpoint devuelve JSON. Tras una operación, JavaScript actualiza solo la tarjeta afectada en lugar de volver a cargar toda la página.
 
-### Update
-Al editar:
+La base de datos se inicializa con 250 registros de prueba. Los primeros 30 ya tienen una imagen local en `src/uploads/`; el resto usa una imagen por defecto.
 
-```text
-api/editar.php
-```
-
-actualiza MySQL y JavaScript reemplaza únicamente la tarjeta modificada.
-
-### Delete
-Al eliminar:
-
-```text
-api/eliminar.php
-```
-
-borra el registro y JavaScript elimina únicamente esa tarjeta del DOM.
-
-## 4. La parte importante de AJAX
-
-No se hace:
-
-```text
-Editar -> recargar index.php
-```
-
-Sino:
-
-```text
-Editar
-   ↓
-JavaScript fetch()
-   ↓
-editar.php
-   ↓
-MySQL
-   ↓
-JSON
-   ↓
-JavaScript
-   ↓
-actualiza SOLO la tarjeta
-```
-
-Eso es justamente la idea del ejercicio: modificar información sin recargar toda la página.
-
-## 5. Detener
+## Detener el proyecto
 
 ```bash
 docker compose down
 ```
 
-## 6. Borrar también la base de datos
-
-Si quieres empezar desde cero:
+Para borrar también el volumen de MySQL y volver a cargar los datos iniciales:
 
 ```bash
 docker compose down -v
 docker compose up -d --build
 ```
-
-El volumen `mysql_data` contiene la base de datos. Al usar `-v` se elimina y `init.sql` vuelve a crear los 250 registros.
