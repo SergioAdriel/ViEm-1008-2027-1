@@ -19,11 +19,11 @@
         }
         header h1 { margin: 0 0 5px; }
         header p { margin: 0; color: #cfd4da; }
-        main { max-width: 1200px; margin: 25px auto; padding: 0 18px; }
+        main { max-width: 1400px; margin: 32px auto; padding: 0 24px; }
         .panel {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 28px;
             box-shadow: 0 2px 10px rgba(0,0,0,.08);
             margin-bottom: 22px;
         }
@@ -40,13 +40,13 @@
         .valor-inline {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 12px;
             width: 100%;
         }
         .valor-inline input {
             min-width: 0;
         }
-        .valor-inline button { width: 100%; }
+        .valor-inline button { width: 100%; min-height: 44px; }
         label { display: block; font-weight: bold; margin-bottom: 6px; }
         input[type="text"], input[type="number"], input[type="file"], textarea {
             width: 100%;
@@ -57,10 +57,12 @@
             font: inherit;
             resize: vertical;
         }
+        textarea { min-height: 110px; }
         button {
             border: 0;
             border-radius: 7px;
-            padding: 10px 15px;
+            padding: 12px 18px;
+            min-height: 44px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -70,23 +72,24 @@
         .edit { background: #ffc107; }
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
         }
         .lista-valores {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
         }
         .valor {
-            padding: 14px;
+            min-height: 92px;
+            padding: 18px;
             border: 1px solid #dee2e6;
             border-radius: 8px;
             background: #f8f9fa;
             display: flex;
             flex-direction: column;
             align-items: stretch;
-            gap: 10px;
+            gap: 14px;
         }
         .valor > span { overflow-wrap: anywhere; }
         .card {
@@ -97,12 +100,12 @@
         }
         .card img {
             width: 100%;
-            height: 155px;
+            height: 210px;
             object-fit: cover;
             display: block;
             background: #eee;
         }
-        .content { padding: 14px; }
+        .content { padding: 20px; }
         .content h3 { margin: 0 0 8px; font-size: 18px; }
         .number {
             font-size: 14px;
