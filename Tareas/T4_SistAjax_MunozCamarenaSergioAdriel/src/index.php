@@ -39,20 +39,23 @@
         }
         .valor-inline {
             display: grid;
-            grid-template-columns: 1fr auto auto;
-            align-items: center;
+            grid-template-columns: 1fr;
             gap: 8px;
+            width: 100%;
         }
         .valor-inline input {
             min-width: 0;
         }
+        .valor-inline button { width: 100%; }
         label { display: block; font-weight: bold; margin-bottom: 6px; }
-        input[type="text"], input[type="number"], input[type="file"] {
+        input[type="text"], input[type="number"], input[type="file"], textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #bbb;
             border-radius: 7px;
             background: white;
+            font: inherit;
+            resize: vertical;
         }
         button {
             border: 0;
@@ -81,10 +84,11 @@
             border-radius: 8px;
             background: #f8f9fa;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: stretch;
             gap: 10px;
         }
+        .valor > span { overflow-wrap: anywhere; }
         .card {
             background: white;
             border-radius: 10px;
@@ -232,7 +236,7 @@ function editarValor(id, tipo) {
     const texto = document.querySelector(`#texto-${id} span`).textContent;
     const numero = document.querySelector(`#numero-${id} strong`).textContent;
     const campo = tipo === 'texto'
-        ? `<input name="texto" type="text" maxlength="300" value="${escaparHTML(texto)}" required>`
+        ? `<textarea name="texto" rows="4" maxlength="300" required>${escaparHTML(texto)}</textarea>`
         : `<input name="numero" type="number" min="0" max="300" value="${numero}" required>`;
     const oculto = tipo === 'texto'
         ? `<input name="numero" type="hidden" value="${numero}">`
@@ -305,7 +309,7 @@ function editarEnLinea(id) {
         <form class="formulario-inline" data-id="${id}">
             <label>
                 Texto
-                <input name="texto" type="text" maxlength="300" value="${escaparHTML(titulo)}" required>
+                <textarea name="texto" rows="3" maxlength="300" required>${escaparHTML(titulo)}</textarea>
             </label>
             <label>
                 Número
