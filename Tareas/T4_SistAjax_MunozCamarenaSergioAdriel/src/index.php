@@ -37,6 +37,15 @@
             grid-template-columns: 1fr;
             align-items: stretch;
         }
+        .valor-inline {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 8px;
+        }
+        .valor-inline input {
+            min-width: 0;
+        }
         label { display: block; font-weight: bold; margin-bottom: 6px; }
         input[type="text"], input[type="number"], input[type="file"] {
             width: 100%;
@@ -197,16 +206,16 @@ function renderizarRegistros(datos) {
     contador.textContent = `${Math.min(datos.length, 30)} imágenes cargadas`;
 
     textos.innerHTML = datos.map(registro => `
-        <div class="valor">
+        <div class="valor" id="texto-${registro.id}">
             <span>${escaparHTML(registro.texto)}</span>
-            <button class="edit" type="button" onclick="prepararEdicion(${registro.id}, '${escaparJS(registro.texto)}', ${registro.numero})">Editar</button>
+            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'texto')">Editar</button>
         </div>
     `).join('');
 
     numeros.innerHTML = datos.map(registro => `
-        <div class="valor">
+        <div class="valor" id="numero-${registro.id}">
             <strong>${registro.numero}</strong>
-            <button class="edit" type="button" onclick="prepararEdicion(${registro.id}, '${escaparJS(registro.texto)}', ${registro.numero})">Editar</button>
+            <button class="edit" type="button" onclick="editarValor(${registro.id}, 'numero')">Editar</button>
         </div>
     `).join('');
 
@@ -217,6 +226,57 @@ function renderizarRegistros(datos) {
 
     registros.innerHTML = datos.slice(0, 30).map(registro => tarjetaHTML(registro)).join('');
 }
+
+function editarValor(id, tipo) {
+    const valor = document.getElementById(`${tipo}-${id}`);
+    const texto = document.querySelector(`#texto-${id} span`).textContent;
+    const numero = document.querySelector(`#numero-${id} strong`).textContent;
+    const campo = tipo === 'texto'
+        ? `<input name="texto" type="text" maxlength="300" value="${escaparHTML(texto)}" required>`
+        : `<input name="numero" type="number" min="0" max="300" value="${numero}" required>`;
+    const oculto = tipo === 'texto'
+        ? `<input name="numero" type="hidden" value="${numero}">`
+        : `<input name="texto" type="hidden" value="${escaparHTML(texto)}">`;
+
+    valor.innerHTML = `
+        <form class="valor-inline" data-id="${id}">
+            ${campo}
+            ${oculto}
+            <button class="primary" type="submit">Guardar</button>
+            <button class="secondary" type="button" onclick="cargarRegistros()">Cancelar</button>
+        </form>
+    `;
+}
+
+document.querySelectorAll('.lista-valores').forEach((lista) => {
+    lista.addEventListener('submit', async (event) => {
+        if (!event.target.matches('.valor-inline')) return;
+
+        event.preventDefault();
+        const formularioValor = event.target;
+        const datos = new FormData(formularioValor);
+        datos.append('id', formularioValor.dataset.id);
+        formularioValor.classList.add('loading');
+
+        try {
+            const respuesta = await fetch('api/editar.php', {
+                method: 'POST',
+                body: datos
+            });
+            const resultado = await respuesta.json();
+
+            if (!respuesta.ok || !resultado.ok) {
+                throw new Error(resultado.mensaje || 'No se pudo actualizar.');
+            }
+
+            await cargarRegistros();
+            mostrarEstado(resultado.mensaje, 'success');
+        } catch (error) {
+            mostrarEstado(error.message, 'error');
+            formularioValor.classList.remove('loading');
+        }
+    });
+});
 
 function tarjetaHTML(registro) {
     const textoSeguro = escaparHTML(registro.texto);
